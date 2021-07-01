@@ -1,0 +1,82 @@
+<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="commons/_meta::meta"/>
+
+    <title>编辑抽成比例</title>
+</head>
+<body>
+<article class="page-container">
+    <form action="/commission/edit" method="post" class="form form-horizontal"
+          id="form-member-add">
+        <input type="text" name="id" id="id" hidden>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span
+                    class="c-red">*</span>抽成比例：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder=""
+                       id="percentage" name="percentage">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit"
+                       value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+<div th:include="commons/_footer.html::footer"/>
+
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript"
+        src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript"
+        src="/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript"
+        src="/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+        //自定义validate验证输入的数字小数点位数不能大于两位
+        jQuery.validator.addMethod("minNumber", function (value, element) {
+            let inputZ = value;
+            let ArrMen = inputZ.split(".");    //截取字符串
+            if (ArrMen.length == 2) {
+                if (ArrMen[1].length > 2) {    //判断小数点后面的字符串长度
+                    return false;
+                }
+            }
+            return true;
+        }, "小数点后最多为两位");
+
+        $("#form-member-add").validate({
+            rules: {
+                percentage: {
+                    required: true,    //要求输入不能为空
+                    number: true,     //输入必须是数字
+                    min: 0,          //输入的数字最小值为0.01，不能为0或者负数
+                    max: 100,
+                    minNumber: $("#percentage").val()
+                },
+            },
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                $(form).ajaxSubmit();
+                // $(form).submit()
+                // let index = parent.layer.getFrameIndex(window.name);
+                // parent.$('.btn-refresh').click();
+                window.parent.location.reload();
+                // parent.layer.close(index);
+            }
+        });
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

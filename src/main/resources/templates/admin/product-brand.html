@@ -1,0 +1,294 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="commons/_meta::meta"/>
+    <title>商品列表</title>
+    <link rel="stylesheet" href="/lib/zTree/v3/css/zTreeStyle/zTreeStyle.css"
+          type="text/css">
+    <style>
+        .table td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="pos-r">
+<div class="pos-a"
+     style="width:200px;left:0;top:0; bottom:0; height:100%; border-right:1px solid #e5e5e5; background-color:#f5f5f5; overflow:auto;">
+    <ul id="treeDemo" class="ztree"></ul>
+</div>
+<div style="margin-left:200px;">
+    <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span
+            class="c-gray en">&gt;</span> 商品管理 <span class="c-gray en">&gt;</span> 品牌管理 <a
+            class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+            href="javascript:location.replace(location.href);" title="刷新"><i
+            class="Hui-iconfont">&#xe68f;</i></a></nav>
+    <div class="page-container">
+        <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="l"><a href="javascript:;"
+                                                                   onclick="datadel()"
+                                                                   class="btn btn-danger radius"><i
+                class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a href="javascript:;"
+                                                              onclick="brand_add('添加品牌','product-brand-add.html','','510')"
+                                                              class="btn btn-primary radius"><i
+                class="Hui-iconfont">&#xe600;</i> 添加品牌</a></span> <!--<span
+            class="r">共有数据：<strong>88</strong> 条</span>-->
+        </div>
+        <div class="mt-20">
+            <table class="table table-border table-bordered table-bg table-hover table-sort">
+                <thead>
+                <tr class="text-c">
+                    <th width="40"><input type="checkbox" name="setAllNo"
+                                          onclick="setAllNo()" value=""></th>
+                    <th width="80">ID</th>
+                    <th width="">品牌名</th>
+                    <th width="">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:include="commons/_footer.html::footer"/>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+        src="/lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript"
+        src="/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" th:inline="none">
+
+    let temp;
+
+    let setting = {
+        view: {
+            dblClickExpand: false,
+            showLine: false,
+            selectedMulti: false
+        },
+        data: {
+            simpleData: {
+                enable: true,
+                idKey: "id",
+                pIdKey: "pid",
+                rootPId: "0"
+            }
+        },
+        callback: {
+            beforeClick: function (treeId, treeNode) {
+                let zTree = $.fn.zTree.getZTreeObj(treeId);
+                if (treeNode.isParent) {
+                    zTree.expandNode(treeNode);
+                    return false;
+                } else {
+                    let id = (treeNode.id + "").slice(5)
+                    temp = id
+                    render(id)
+                    return true;
+                }
+            }
+        }
+    };
+
+    let table;
+
+    function render(clid) {
+        if (table) {
+            //清空表格
+            $('.table-sort').dataTable().fnClearTable();
+
+            //摧毁表格
+            $('.table-sort').dataTable().fnDestroy();
+        }
+
+        //加载表格
+        table = $('.table-sort').dataTable({
+            ajax: {
+                url: "/brand/list",
+                data: {
+                    clid: clid
+                },
+                dataSrc: function (res) {
+                    return res.data;
+                }
+            },
+            columns: [
+                {"data": ""},
+                {"data": "id"},
+                {"data": "name"},
+                {"data": ""},
+            ],
+            "aaSorting": [[1, "asc"]],//默认第几个排序
+            "bStateSave": true,//状态保存
+            "aoColumnDefs": [
+                {"orderable": false, "aTargets": [1, 2]},// 制定列不参与排序
+                {
+                    "aTargets": [0],
+                    "mRender": function (settings, rowIdx, rec, type) {
+                        // var date = rec.id + "/" + rec.cjr;
+
+                        let btnBind =
+                            "<label><input type='checkbox' name='checkBox' value='" +
+                            rec.id + "'/><span class='lbl'></span></label>";
+                        return btnBind;
+                    }
+                },
+                {
+                    "aTargets": [3],
+                    "mRender": function (settings, rowIdx, rec, type) {
+
+                        let name = rec.name,
+                            id = rec.id,
+                            clid = rec.clid
+
+                        let html = "<a title=\"编辑\"\n" +
+                            "href=\"javascript:;\"\n" +
+                            "onclick=\"brand_edit('编辑','product-brand-add.html'," +
+                            id + ",'" + name + "'," + clid +
+                            ",'510')\"\n" +
+                            "class=\"ml-5\"\n" +
+                            "style=\"text-decoration:none\"><i\n" +
+                            "                        class=\"Hui-iconfont\">&#xe6df;</i></a><a title=\"删除\"\n" +
+                            "href=\"javascript:;\"\n" +
+                            "onclick=\"brand_del(this)\"\n" +
+                            "class=\"ml-5\"\n" +
+                            "style=\"text-decoration:none\"><i\n" +
+                            "                        class=\"Hui-iconfont\">&#xe6e2;</i></a>"
+                        return html;
+                    }
+                }
+            ]
+        });
+    }
+
+    $(document).ready(function () {
+        let zNodes;
+        let zTree;
+        $.ajax({
+            url: "/categoryList/tree",
+            type: "GET",
+            success(res) {
+                zNodes = res.data;
+                let t = $("#treeDemo");
+                $.fn.zTree.init(t, setting, zNodes);
+                zTree = $.fn.zTree.getZTreeObj("tree");
+            }
+        })
+    });
+
+    /*会员-添加*/
+    function brand_add(title, url, w, h) {
+        if (temp == undefined) {
+            alert("请选择分类！")
+        } else {
+            let w = 800
+            layer.open({
+                type: 2,
+                area: [w + 'px', h + 'px'],
+                fix: false, //不固定
+                maxmin: true,
+                shade: 0.4,
+                title: title,
+                content: url,
+                success(layero, index) {
+                    let body = layer.getChildFrame('body', index)
+                    body.contents().find("#clid").val(temp);
+                }
+            });
+        }
+
+    }
+
+    /*会员-编辑*/
+    function brand_edit(title, url, id, name, answer, type1, h) {
+        let w = 800
+        layer.open({
+            type: 2,
+            area: [w + 'px', h + 'px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade: 0.4,
+            title: title,
+            content: url,
+            success(layero, index) {
+                let body = layer.getChildFrame('body', index)
+                body.contents().find("#id").val(id);
+                body.contents().find("#name").val(name);
+                body.contents().find("#clid").val(clid);
+            }
+        });
+    }
+
+    /*会员-删除*/
+    function brand_del(obj) {
+        let id = $(obj).parents("tr").find(".sorting_1 input:first-child").val()
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                type: 'DELETE',
+                url: '/brand?idList=' + [id],
+                dataType: 'json',
+                success: function (data) {
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+
+    /*全选或全不选*/
+    function setAllNo() {
+        let flag = $("thead :checkbox").prop("checked");
+        let data = $("tbody :checkbox")
+        // let a = $(flag[0]).attr("checked")
+        if (flag) {
+            data.each((i) => {
+                $(data[i]).prop("checked", true);
+            })
+        } else {
+            data.each((i) => {
+                $(data[i]).prop("checked", false);
+            })
+        }
+    }
+
+    /*问题-批量删除*/
+    function datadel() {
+        if (temp == undefined) {
+            alert("请选择数据！")
+        } else {
+            let arr = []
+            let list = $("tbody input:checkbox[name='checkBox']:checked")
+            if (list.size() === 0) {
+                alert("请选择数据！")
+            } else {
+                list.each(function (i) {
+                    arr.push($(this).val());
+                });
+                layer.confirm('确认要删除吗？', function (index) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '/brand?idList=' + arr,
+                        dataType: 'json',
+                        success: function (data) {
+                            list.each((i) => {
+                                $(list[i]).parents("tr").remove();
+                            })
+                            layer.msg('已删除!', {icon: 1, time: 1000});
+                        },
+                        error: function (data) {
+                            console.log(data.msg);
+                        },
+                    });
+                });
+            }
+        }
+    }
+</script>
+</body>
+</html>

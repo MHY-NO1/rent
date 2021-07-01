@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="commons/_meta::meta"/>
+    <title>抽成管理</title>
+    <style>
+        .table td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>
+    客服管理 <span class="c-gray en">&gt;</span> 电话管理 <a
+            class="btn btn-success radius r btn-refresh"
+            style="line-height:1.6em;margin-top:3px"
+            href="javascript:location.replace(location.href);"
+            title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a>
+</nav>
+<div class="page-container">
+    <div class="text-c"> <!--日期范围：
+        <input type="text"
+               onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}' })"
+               id="datemin" class="input-text Wdate" style="width:120px;">
+        -
+        <input type="text"
+               onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d' })"
+               id="datemax" class="input-text Wdate" style="width:120px;">-->
+        <!--<input type="text" class="input-text" style="width:250px"
+               placeholder="输入订单号" id="tradeNo" name="">
+        <button type="button" onclick="search()" class="btn btn-success radius" id=""
+                name=""><i
+                class="Hui-iconfont">&#xe665;</i> 搜索
+        </button>-->
+    </div>
+    <!--<div class="cl pd-5 bg-1 bk-gray mt-20"><span class="l"><a href="javascript:;"
+                                                               onclick="datadel()"
+                                                               class="btn btn-danger radius"><i
+            class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a href="javascript:;"
+                                                          onclick="member_add('添加用户','member-level-add.html','','510')"
+                                                          class="btn btn-primary radius"><i
+            class="Hui-iconfont">&#xe600;</i> 添加会员</a></span> &lt;!&ndash;<span
+            class="r">共有数据：<strong>88</strong> 条</span>&ndash;&gt;
+    </div>-->
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-hover table-bg table-sort">
+            <thead>
+            <tr class="text-c">
+                <!--                <th width="25"><input type="checkbox" name="setAllNo"
+                                                      onclick="setAllNo()" value=""></th>-->
+                <th width="">ID</th>
+                <th width="">客服电话</th>
+                <th width="">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div th:include="commons/_footer.html::footer"/>
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript"
+        src="/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" th:inline="none">
+    $(function () {
+        render()
+    });
+
+    function render() {
+        $('.table-sort').dataTable({
+            ajax: {
+                url: "/servePhone",
+                dataSrc: function (res) {
+                    return res.data;
+                }
+            },
+            columns: [
+                {"data": "id"},
+                {"data": "phone"},
+                {"data": ""}
+            ],
+            "aaSorting": [[0, "asc"]],//默认第几个排序
+            "bStateSave": true,//状态保存
+            "aoColumnDefs": [
+                //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+                {
+                    "orderable": false, "aTargets": []
+                },// 制定列不参与排序
+                {
+                    "aTargets": [2],
+                    "mRender": function (settings, rowIdx, rec, type) {
+                        let id = rec.id, phone = rec.phone
+
+                        let html = "<a title=\"编辑\"\n" +
+                            "href=\"javascript:;\"\n" +
+                            "onclick=\"phone_edit('编辑','phone-edit.html'," + id +
+                            ",'" +
+                            phone + "','','510')\"\n" +
+                            "class=\"ml-5\"\n" +
+                            "style=\"text-decoration:none\"><i\n" +
+                            "                        class=\"Hui-iconfont\">&#xe6df;</i>"
+                        return html;
+                    }
+                }
+            ]
+        });
+    }
+
+    /*电话-编辑*/
+    function phone_edit(title, url, id, phone, w, h) {
+        w = 800
+        layer.open({
+            type: 2,
+            area: [w + 'px', h + 'px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade: 0.4,
+            title: title,
+            content: url,
+            success(layero, index) {
+                let body = layer.getChildFrame('body', index)
+                body.contents().find("#id").val(id);
+                body.contents().find("#phone").val(phone);
+            }
+        });
+    }
+</script>
+</body>
+</html>

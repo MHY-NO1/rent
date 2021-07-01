@@ -1,0 +1,379 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="commons/_meta::meta"/>
+    <title>商品列表</title>
+    <link rel="stylesheet" href="/lib/zTree/v3/css/zTreeStyle/zTreeStyle.css"
+          type="text/css">
+    <style>
+        .table td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="pos-r">
+<div class="pos-a"
+     style="width:200px;left:0;top:0; bottom:0; height:100%; border-right:1px solid #e5e5e5; background-color:#f5f5f5; overflow:auto;">
+    <ul id="treeDemo" class="ztree"></ul>
+</div>
+<div style="margin-left:200px;">
+    <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span
+            class="c-gray en">&gt;</span> 商品管理 <span class="c-gray en">&gt;</span> 产品管理 <a
+            class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+            href="javascript:location.replace(location.href);" title="刷新"><i
+            class="Hui-iconfont">&#xe68f;</i></a></nav>
+    <div class="page-container">
+        <!--<div class="text-c"> 日期范围：
+            <input type="text"
+                   onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'logmax\')||\'%y-%M-%d\'}' })"
+                   id="logmin" class="input-text Wdate" style="width:120px;">
+            -
+            <input type="text"
+                   onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'logmin\')}',maxDate:'%y-%M-%d' })"
+                   id="logmax" class="input-text Wdate" style="width:120px;">
+            <input type="text" name="" id="" placeholder=" 产品名称" style="width:250px"
+                   class="input-text">
+            <button name="" id="" class="btn btn-success" type="submit"><i
+                    class="Hui-iconfont">&#xe665;</i> 搜产品
+            </button>
+        </div>-->
+        <!--<div class="cl pd-5 bg-1 bk-gray mt-20"><span class="l"><a href="javascript:;"
+                                                                   onclick="datadel()"
+                                                                   class="btn btn-danger radius"><i
+                class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a
+                class="btn btn-primary radius"
+                onclick="product_add('添加产品','product-add.html')" href="javascript:;"><i
+                class="Hui-iconfont">&#xe600;</i> 添加产品</a></span> <span
+                class="r">共有数据：<strong>54</strong> 条</span></div>-->
+        <div class="mt-20">
+            <table class="table table-border table-bordered table-bg table-hover table-sort">
+                <thead>
+                <tr class="text-c">
+                    <!--                    <th width="40"><input name="" type="checkbox" value=""></th>-->
+                    <th width="">ID</th>
+                    <th width="">商家ID</th>
+                    <th width="">商品标题</th>
+                    <th>商品子标题</th>
+                    <th width="">套餐种类</th>
+                    <th width="">可选租期（天）</th>
+                    <th>创建时间</th>
+                    <th>支持买断</th>
+                    <th>商家电话</th>
+                    <th width="">状态</th>
+                    <th width="">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:include="commons/_footer.html::footer"/>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+        src="/lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript"
+        src="/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" th:inline="none">
+    let temp
+
+    let setting = {
+        view: {
+            dblClickExpand: false,
+            showLine: false,
+            selectedMulti: false
+        },
+        data: {
+            simpleData: {
+                enable: true,
+                idKey: "id",
+                pIdKey: "pid",
+                rootPId: "0"
+            }
+        },
+        callback: {
+            beforeClick: function (treeId, treeNode) {
+                let zTree = $.fn.zTree.getZTreeObj(treeId);
+                if (treeNode.isParent) {
+                    zTree.expandNode(treeNode);
+                    return false;
+                } else {
+                    let id = (treeNode.id + "").slice(5)
+                    temp = id
+                    render(id)
+                    return true;
+                }
+            }
+        }
+    };
+
+    let table;
+
+    function render(clid) {
+        if (table) {
+            //清空表格
+            $('.table-sort').dataTable().fnClearTable();
+
+            //摧毁表格
+            $('.table-sort').dataTable().fnDestroy();
+        }
+
+        //加载表格
+        table = $('.table-sort').dataTable({
+            ajax: {
+                url: "/product/list",
+                data: {
+                    clid: clid
+                },
+                dataSrc: function (res) {
+                    return res.data;
+                }
+            },
+            columns: [
+                // {"data": ""},
+                {"data": "id"},
+                {"data": "publisherId"},
+                {"data": "title"},
+                {"data": "subtitle"},
+                {"data": "cids"},
+                {"data": "tids"},
+                {"data": "createDate"},
+                {"data": "isBuyOut"},
+                {"data": "phone"},
+                {"data": "state"},
+                {"data": ""},
+            ],
+            "aaSorting": [[0, "asc"]],//默认第几个排序
+            "bStateSave": true,//状态保存
+            "aoColumnDefs": [
+                {"orderable": false, "aTargets": [1, 2, 3, 4, 5, 7, 8, 9, 10]},// 制定列不参与排序
+                {
+                    "aTargets": [7],
+                    "mRender": function (settings, rowIdx, rec, type) {
+                        let text;
+                        if (rec.isBuyOut == 0) {
+                            text = "否"
+                        } else {
+                            text = "是"
+                        }
+                        return text;
+                    }
+                },
+                {
+                    "aTargets": [6],
+                    "mRender": function (settings, rowIdx, rec, type) {
+                        return new Date(rec.createDate).Format("yyyy-MM-dd");
+                    }
+                },
+                {
+                    "aTargets": [9],
+                    "mRender": function (settings, rowIdx, rec, type) {
+
+                        let data;
+                        switch (rec.state) {
+                            case 0:
+                                data = "<span class=\"label radius\">未上架</span>"
+                                break;
+                            case 1:
+                                data = "<span class=\"label label-success radius\">上架中</span>"
+                                break;
+                            case 2:
+                                data = "<span class=\"label label-warning radius\">已下架</span>"
+                                break;
+                            case 3:
+                                data = "<span class=\"label label-danger radius\">已封禁</span>"
+                                break;
+                        }
+                        return data
+                    }
+                },
+                {
+                    "aTargets": [10],
+                    "mRender": function (settings, rowIdx, rec, type) {
+                        let html="";
+                        switch (rec.state) {
+                            case 0:
+                                break;
+                            case 1:
+                                html = "<a style=\"text-decoration:none\"\n" +
+                                    "       onClick=\"product_stop(this,'10001')\"\n" +
+                                    "       href=\"javascript:;\" title=\"封禁\"><i\n" +
+                                    "            class=\"Hui-iconfont\">&#xe631;</i>\n" +
+                                    "    </a>"
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                html = "<a style=\"text-decoration:none\" href=\"javascript:;\"\n" +
+                                    "       onClick=\"product_start(this,'1')\" title=\"解封\"><i\n" +
+                                    "            class=\"Hui-iconfont\">&#xe66b;</i>\n" +
+                                    "    </a>"
+                                break;
+                        }
+
+                        return html;
+                    }
+                },
+            ]
+        });
+    }
+
+    $(document).ready(function () {
+        let zNodes;
+        let zTree;
+        $.ajax({
+            url: "/categoryList/tree",
+            type: "GET",
+            success(res) {
+                zNodes = res.data;
+                let t = $("#treeDemo");
+                $.fn.zTree.init(t, setting, zNodes);
+                zTree = $.fn.zTree.getZTreeObj("tree");
+            }
+        })
+    });
+
+    /*格式化时间*/
+    Date.prototype.Format = function (fmt) { //author: meizz
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "H+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+
+
+    /*产品-添加*/
+    function product_add(title, url) {
+        var index = layer.open({
+            type: 2,
+            title: title,
+            content: url
+        });
+        layer.full(index);
+    }
+
+    /*产品-查看*/
+    function product_show(title, url, id) {
+        var index = layer.open({
+            type: 2,
+            title: title,
+            content: url
+        });
+        layer.full(index);
+    }
+
+    /*产品-审核*/
+    function product_shenhe(obj, id) {
+        layer.confirm('审核文章？', {
+                btn: ['通过', '不通过'],
+                shade: false
+            },
+            function () {
+                $(obj).parents("tr").find(".td-manage").prepend('<a class="c-primary" onClick="product_start(this,id)" href="javascript:;" title="申请上线">申请上线</a>');
+                $(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已发布</span>');
+                $(obj).remove();
+                layer.msg('已发布', {icon: 6, time: 1000});
+            },
+            function () {
+                $(obj).parents("tr").find(".td-manage").prepend('<a class="c-primary" onClick="product_shenqing(this,id)" href="javascript:;" title="申请上线">申请上线</a>');
+                $(obj).parents("tr").find(".td-status").html('<span class="label label-danger radius">未通过</span>');
+                $(obj).remove();
+                layer.msg('未通过', {icon: 5, time: 1000});
+            });
+    }
+
+    /*产品-下架*/
+    function product_stop(obj, id) {
+        layer.confirm('确认要封禁该商品吗？', function (index) {
+            $.ajax({
+                type: 'POST',
+                url: '/product/ban',
+                data: {
+                    state: 3,
+                    id: $(obj).parents("tr").find(".sorting_1").text()
+                },
+                dataType: 'json',
+                success: function (data) {
+                    render(temp)
+                    layer.msg('已封禁!', {icon: 4, time: 1000});
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+
+    /*产品-发布*/
+    function product_start(obj, id) {
+        layer.confirm('确认要解封吗？', function (index) {
+            $.ajax({
+                type: 'POST',
+                url: '/product/ban',
+                data: {
+                    state: 1,
+                    id: $(obj).parents("tr").find(".sorting_1").text()
+                },
+                dataType: 'json',
+                success: function (data) {
+                    render(temp)
+                    layer.msg('已解封!', {icon: 1, time: 1000});
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+
+    /*产品-申请上线*/
+    function product_shenqing(obj, id) {
+        $(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">待审核</span>');
+        $(obj).parents("tr").find(".td-manage").html("");
+        layer.msg('已提交申请，耐心等待审核!', {icon: 1, time: 2000});
+    }
+
+    /*产品-编辑*/
+    function product_edit(title, url, id) {
+        var index = layer.open({
+            type: 2,
+            title: title,
+            content: url
+        });
+        layer.full(index);
+    }
+
+    /*产品-删除*/
+    function product_del(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                type: 'POST',
+                url: '',
+                dataType: 'json',
+                success: function (data) {
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+</script>
+</body>
+</html>

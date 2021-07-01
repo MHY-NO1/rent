@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="commons/_meta::meta"/>
+    <title>统计管理</title>
+    <style>
+        .table td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>
+    抽成管理 <span class="c-gray en">&gt;</span> 抽成记录 <a
+            class="btn btn-success radius r btn-refresh"
+            style="line-height:1.6em;margin-top:3px"
+            href="javascript:location.replace(location.href);"
+            title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a>
+</nav>
+<div class="page-container">
+    <div class="text-c"> <!--日期范围：
+        <input type="text"
+               onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}' })"
+               id="datemin" class="input-text Wdate" style="width:120px;">
+        -
+        <input type="text"
+               onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d' })"
+               id="datemax" class="input-text Wdate" style="width:120px;">-->
+        <!--<input type="text" class="input-text" style="width:250px"
+               placeholder="输入订单号" id="tradeNo" name="">
+        <button type="button" onclick="search()" class="btn btn-success radius" id=""
+                name=""><i
+                class="Hui-iconfont">&#xe665;</i> 搜索
+        </button>-->
+    </div>
+    <!--<div class="cl pd-5 bg-1 bk-gray mt-20"><span class="l"><a href="javascript:;"
+                                                               onclick="datadel()"
+                                                               class="btn btn-danger radius"><i
+            class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a href="javascript:;"
+                                                          onclick="member_add('添加用户','member-level-add.html','','510')"
+                                                          class="btn btn-primary radius"><i
+            class="Hui-iconfont">&#xe600;</i> 添加会员</a></span> &lt;!&ndash;<span
+            class="r">共有数据：<strong>88</strong> 条</span>&ndash;&gt;
+    </div>-->
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-hover table-bg table-sort">
+            <thead>
+            <tr class="text-c">
+                <!--                <th width="25"><input type="checkbox" name="setAllNo"
+                                                      onclick="setAllNo()" value=""></th>-->
+                <th width="">ID</th>
+                <th width="">订单ID</th>
+                <th width="">抽成金额</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div th:include="commons/_footer.html::footer"/>
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript"
+        src="/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" th:inline="none">
+    $(function () {
+        /*new Promise((resolve, reject) => {
+            $.ajax({
+                url: "/category",
+                success(res) {
+                    resolve(res.data)
+                }
+            })
+        }).then(categories => {
+            render(categories)
+        })*/
+        render();
+    });
+
+    function render() {
+        $('.table-sort').dataTable({
+            ajax: {
+                url: "/commissionList/list",
+                dataSrc: function (res) {
+                    // return res.data.records;
+                    return res.data;
+                }
+            },
+            columns: [
+                {"data": "id"},
+                {"data": "oid"},
+                {"data": "money"}
+            ],
+            "aaSorting": [[0, "desc"]],//默认第几个排序
+            "bStateSave": true,//状态保存
+            "aoColumnDefs": [
+                //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+                {
+                    "orderable": false, "aTargets": []
+                },// 制定列不参与排序
+                // {
+                //     "aTargets": [0],
+                //     "mRender": function (settings, rowIdx, rec, type) {
+                //         if (rec.categoryId) {
+                //             return categories.find(item => item.id === rec.categoryId).title
+                //         }
+                //         return ""
+                //     }
+                // },
+            ]
+        });
+    }
+
+    /*function search() {
+        render()
+    }*/
+
+    /*格式化时间*/
+    Date.prototype.Format = function (fmt) { //author: meizz
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "H+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+
+    function show(title, url) {
+        let index = layer.open({
+            type: 2,
+            title: title,
+            content: url
+        });
+        layer.full(index);
+    }
+
+    /*抽成-编辑*/
+    function commission_edit(title, url, id, percentage, w, h) {
+        w = 800
+        layer.open({
+            type: 2,
+            area: [w + 'px', h + 'px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade: 0.4,
+            title: title,
+            content: url,
+            success(layero, index) {
+                let body = layer.getChildFrame('body', index)
+                body.contents().find("#id").val(id);
+                body.contents().find("#percentage").val(percentage);
+            }
+        });
+        // layer_show(title, url, w, h);
+        // let iframe = $(".layui-layer-content > iframe").contents().find("label")
+    }
+
+    /*会员-添加*/
+    function member_add(title, url, w, h) {
+        layer_show(title, url, w, h);
+    }
+
+    /*用户-查看*/
+    function member_show(title, url, id, w, h) {
+        layer_show(title, url, w, h);
+    }
+
+    /*用户-停用*/
+    function member_stop(obj, id) {
+        layer.confirm('确认要停用吗？', function (index) {
+            $.ajax({
+                type: 'POST',
+                url: '',
+                dataType: 'json',
+                success: function (data) {
+                    $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="member_start(this,id)" href="javascript:;" title="启用"><i class="Hui-iconfont">&#xe6e1;</i></a>');
+                    $(obj).parents("tr").find(".td-status").html('<span class="label label-defaunt radius">已停用</span>');
+                    $(obj).remove();
+                    layer.msg('已停用!', {icon: 5, time: 1000});
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+
+    /*用户-启用*/
+    function member_start(obj, id) {
+        layer.confirm('确认要启用吗？', function (index) {
+            $.ajax({
+                type: 'POST',
+                url: '',
+                dataType: 'json',
+                success: function (data) {
+                    $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="member_stop(this,id)" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a>');
+                    $(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已启用</span>');
+                    $(obj).remove();
+                    layer.msg('已启用!', {icon: 6, time: 1000});
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+
+    /*会员-编辑*/
+    function member_edit(title, url, id, w, h) {
+        w = 800
+        layer.open({
+            type: 2,
+            area: [w + 'px', h + 'px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade: 0.4,
+            title: title,
+            content: url,
+            success() {
+                $("#name").val(123)
+            }
+        });
+        // layer_show(title, url, w, h);
+        // let iframe = $(".layui-layer-content > iframe").contents().find("label")
+    }
+
+    /*密码-修改*/
+    function change_password(title, url, id, w, h) {
+        layer_show(title, url, w, h);
+    }
+
+    /*会员-删除*/
+    function member_del(obj) {
+        let id = $(obj).parents("tr").find(".sorting_1").text()
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                type: 'DELETE',
+                url: '/vip?idList=' + [id],
+                dataType: 'json',
+                success: function (data) {
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+
+    /*全选或全不选*/
+    function setAllNo() {
+        let flag = $("thead :checkbox").prop("checked");
+        let data = $("tbody :checkbox")
+        // let a = $(flag[0]).attr("checked")
+        if (flag) {
+            data.each((i) => {
+                $(data[i]).prop("checked", true);
+            })
+        } else {
+            data.each((i) => {
+                $(data[i]).prop("checked", false);
+            })
+        }
+    }
+
+    /*会员-批量删除*/
+    function datadel() {
+        let arr = []
+        let list = $("tbody input:checkbox[name='checkBox']:checked")
+        list.each(function (i) {
+            arr.push($(this).val());
+        });
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                type: 'DELETE',
+                url: '/vip?idList=' + arr,
+                dataType: 'json',
+                success: function (data) {
+                    list.each((i) => {
+                        $(list[i]).parents("tr").remove();
+                    })
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+</script>
+</body>
+</html>

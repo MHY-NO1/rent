@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="commons/_meta::meta"/>
+
+    <title>新增图片</title>
+    <link href="/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div class="page-container">
+    <input name="id" id="id" hidden>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">图片上传：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <div id="uploader" class="wu-example">
+                <!--用来存放文件信息-->
+                <div class="btns">
+                    <div id="picker">选择图片</div>
+                    <button id="ctlBtn" onclick="upload()" class="btn btn-default">开始上传
+                    </button>
+                </div>
+                <div id="upload-list" class="uploader-list"></div>
+            </div>
+
+            <div class="border" style="height: 100px; border-radius: 5px;">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:include="commons/_footer.html::footer"/>
+
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+        src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript"
+        src="/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript"
+        src="/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript">
+
+    let uploader;
+
+    function upload() {
+        let dd = uploader.getFiles().length;
+        if (dd > 0) {
+            uploader.upload();
+        } else {
+            alert("请选择图片！");
+        }
+    }
+
+    function del(obj) {
+        // let id = $(obj).attr("id")
+        // uploader.removeFile(id, true);
+        uploader.reset()
+        $(".border").empty()
+    }
+
+    $(function () {
+        uploader = WebUploader.create({
+            auto: false,// 选完文件后，是否自动上传。
+            swf: '/lib/webuploader/0.1.5/Uploader.swf',// swf文件路径
+            server: '/indexSlideshow/picture',// 文件接收服务端。
+            // dnd: '#picker',
+            pick: {
+                id: '#picker',
+                multiple: false
+            },// 内部根据当前运行是创建，可能是input元素，也可能是flash. 这里是div的id
+            multiple: false, // 选择多个
+            chunked: false,// 开起分片上传。
+            threads: 1, // 上传并发数。允许同时最大上传进程数。
+            method: 'POST', // 文件上传方式，POST或者GET。
+            fileNumLimit: 1,
+            fileSizeLimit: 1024 * 1024 * 100 * 10, //验证文件总大小是否超出限制, 超出则不允许加入队列。
+            fileSingleSizeLimit: 1024 * 1024 * 100, //验证单个文件大小是否超出限制, 超出则不允许加入队列。
+            fileVal: 'file', // [默认值：'file'] 设置文件上传域的name。
+        });
+
+        // 文件上传过程中创建进度条实时显示。
+        uploader.on('uploadProgress', function (file, percentage) {
+            var $li = $('#' + file.id),
+                $percent = $li.find('.uploadify-progress .uploadify-progress-bar');
+
+            // 避免重复创建
+            if (!$percent.length) {
+                $percent = $('<div class="uploadify-progress uploadify-progress-striped active">' +
+                    '<div class="uploadify-progress-bar" role="progressbar" style="width: 0%">' +
+                    '</div>' +
+                    '</div>').appendTo($li).find('.uploadify-progress-bar');
+            }
+            $li.find('.data').text('  上传中').css("color", "red");
+            ;
+            $percent.css('width', percentage * 100 + '%');
+        });
+
+        // 当有文件被添加进队列的时候
+        uploader.on('fileQueued', function (file) {
+            var itemTemplate = "";
+            var fileSize = parseInt(file.size / 1024);
+            if (fileSize >= 1024)
+                fileSize = parseInt(fileSize / 1024) + "MB"
+            else
+                fileSize = parseInt(fileSize) + "KB"
+
+            itemTemplate = '<div id="' + file.id + '" class="uploadify-queue-item">\
+                        <div style="float:left;width:50px;margin-right:2px;"><img src="https://fc2tn.baidu.com/it/u=1550957129,32869457&fm=202" style="width:50px;height:40px;"></div>\
+                        <div class="cancel">\
+                            <a href=""></a>\
+                        </div>\
+                        <span class="fileName">' + file.name + ' (' + fileSize + ')</span><span class="data"></span>\
+                    <button id="' + file.id +
+                '" onclick="del(this)" class="btn btn-default">删除</button></div>' + itemTemplate;
+            $(".border").prepend(itemTemplate);
+            $(".drag-tip").remove();
+        });
+
+        // uploader.on('fileQueued', function (file) {
+        //     // 选中文件时要做的事情，比如在页面中显示选中的文件并添加到文件列表，获取文件的大小，文件类型等
+        //     // console.log(file)
+        //     // console.log(file.ext) // 获取文件的后缀
+        //     // console.log(file.size) // 获取文件的大小
+        //     // console.log(file.name);
+        //     let html = '<div class="upload-item"><span>文件名：' + file.name +
+        //         '</span><button id="' + file.id +
+        //         '" onclick="del(this)" class="btn btn-default">删除</button></div>';
+        //     $('#upload-list').append(html);
+        // });
+
+        uploader.on('error', function (handler) {
+            if (handler == "Q_EXCEED_NUM_LIMIT") {
+                alert("只能上传一张图片");
+            }
+        });
+
+        // 文件上传成功
+        uploader.on('uploadSuccess', function (file, response) {
+            window.parent.location.reload();
+        });
+    })
+
+</script>
+</body>
+</html>

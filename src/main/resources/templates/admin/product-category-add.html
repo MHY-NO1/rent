@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="commons/_meta::meta"/>
+
+    <title>添加产品分类</title>
+</head>
+<body>
+<div class="page-container">
+    <form action="/category" method="post"
+          class="form form-horizontal"
+          id="form">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">
+                <span class="c-red">*</span>
+                一级分类名称：</label>
+            <div class="formControls col-xs-6 col-sm-6">
+                <input type="text" class="input-text" value="" placeholder=""
+                       id="name" name="title">
+            </div>
+        </div>
+        <!--<div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">备注：</label>
+            <div class="formControls col-xs-6 col-sm-6">
+                <textarea name="" cols="" rows="" class="textarea"
+                          placeholder="说点什么...最少输入10个字符"
+                          onKeyUp="$.Huitextarealength(this,100)"></textarea>
+                <p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+            </div>
+        </div>-->
+        <div class="row cl">
+            <div class="col-9 col-offset-2">
+                <!--                <input class="btn btn-primary radius" type="submit"-->
+                <!--                       value="&nbsp;&nbsp;提交&nbsp;&nbsp;">-->
+                <button class="btn btn-primary radius"
+                        type="button" onclick="add()">&nbsp;&nbsp;添加&nbsp;&nbsp;
+                </button>
+                <!--                <input class="btn btn-secondary radius radius" type="submit"-->
+                <!--                       value="&nbsp;&nbsp;添加为一级分类&nbsp;&nbsp;">-->
+                <!--                <input class="btn btn-success radius" type="submit"-->
+                <!--                       value="&nbsp;&nbsp;编辑&nbsp;&nbsp;">-->
+                <!--                <button class="btn btn-danger radius" onclick="del()"-->
+                <!--                >&nbsp;&nbsp;删除&nbsp;&nbsp;-->
+                <!--                </button>-->
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="commons/_footer.html::footer"/>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+        src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript"
+        src="/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript"
+        src="/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    function add() {
+        if (confirm("确定添加该分类？")) {
+            let name = $("#name").val()
+            if (name != null && name != "") {
+                $("#form").submit();
+                window.parent.location.reload();
+            } else {
+                alert("值不能为空！")
+            }
+        }
+    }
+
+    $(function () {
+        // top.location.href = "product-category.html"
+    });
+</script>
+</body>
+</html>
