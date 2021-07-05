@@ -23,10 +23,8 @@ import java.util.Map;
 
 public class AlipayUtils {
     //    真实环境
-    private static final String APP_ID = "2021002133636540";
-    private static final String APP_PRIVATE_KEY =
-            "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCKSqAlyxLihwVIgEitZ0jrwc0Pz7XzCoQfy" +
-                    "/6MpRNWEskBpo0FL2A9v6Jdpn9zFmg9oKrlEhlVaEQg8YRiZDn9mBGjqRtzA0PM2rrtGuPcT7sTAgyExVGjryiaGND778tOnzkZtRayCeTSJeu6oZnkV8vEff+75MzWo5qD0iCYxkCsU32SUupS2rZPFgzdppbiOtmtQjNSbjuM40X3QqeBAL6ZPQXjn0BUzGd5oAfDU0EykeP/EgpacMEM9aH2DrlFChlGXMRtI7axIsNmO5fS8GhNhVejIbdNAd+VkGmRsDa/nQE5T4xS4NsTYumdVLYlVoO42EDgtB9eV0e6XytBAgMBAAECggEAAOWU/km/2Jo5jYvPbNhzn5vFIaoeKvJRgwdGolDbvD4o8YrL9VGmVSAuBF91CiEGEgg9s3iXk3c2oeQPELhHq/5VdvM8y1UlFmoAtlLrUV1vACOOQzooWmBjagRpLokSj3L24tTKzeLEihxW2AH+Rn3PQ3nxs507OtUaxmoRbgwwiBPpyHfPoeokbUrb30HzsIPRPGu7tcRMnadudf9mH9Qwu5cuvTT/C2TIkVRrNsC9V58l+ddbZpsTpf32SI3ljN+JOuVFXnJOmdoANxJ0hZRvcPbCTbboJ69cCwaC98P2XQL4MZcFZRTyPFvbH90vwxoW0GAVckkIJRiD+N2gAQKBgQD+CUxJOPj+18kJkW/u0o/Ey/xMeKhFOp6ZOiNXoHt5IJ/KwbqaPkoct1C36y2LsHZbjDond8dSqpYrLUXIYN7SFhNrJi6wW6UFvXZD4sMYVklByEssXFb/gqMvo0QSkCWKHgdG3fOmY2H3eBbrh0gY2lHVU/HfnKqEnn0pynDNwQKBgQCLXEjx3E5qI90QeDTGociL7sk+J1434Zf8tE1qKknRehcgjEQt+J3fUHxPttAfz21nilbGLCLRAhaq6ilb+3qIJnqIhRLQLDGPuhZ41/+rcAeDpQgDPGzUWNFMU4uXSnfsfwzew2/I9eqE2n0YJ+6409eOMI6LNUsAeGBml6C9gQKBgEt2X57wuaaaWzHobiO3kNWY8t2Uigfmne5Oguko1wToWA9W9SOUlVdqbSP1TJZOWRpg0XWf8ynvWqSA0lXv0MD/pc0SjpP85UyLN3J7DhFQsHpGEW6gD4ffOrKQAUyyXTRmLysyC4rFwvhMSCK3EQew8tY4FYWjeFPk8LFVXaUBAoGAM3ZDtZSeHFHcC33oN0V88jeeduZAw6/52SaXw9GT6tgD/E/vyW4almF5VlJy7pxBkU+jlZCs1rPHvRu1ZDMsX2SeMRW7CcaYErQsIjnZPuyiyblCiTdiFNQrjdz4Gkk0mc+c6BIRkItHLAIm2am9XOFVoztJGBz48laBesEZaYECgYBHM/zrZlHRdNxPj2dN/Jrk2xozD4dLioxHOrnUvOcVdBtOlvEIoA2ZHtYQTQxGUQDVgbxE0zntdjlHJ767KHrhxpnk3jhSA/1qDdiwh2DjarWyraQqXMG/GsOsW2zE4FsGzINMEL4K1UjeJMm0/G48rqyvYDoej7y4mVsrUeWKbA==";
+    private static final String APP_ID = "";
+    private static final String APP_PRIVATE_KEY ="";
     private static final String CHARSET = "utf-8";
     private static final String SIGN_TYPE = "RSA2";
     private static final String SERVER_URL = "https://openapi.alipay.com/gateway.do";
