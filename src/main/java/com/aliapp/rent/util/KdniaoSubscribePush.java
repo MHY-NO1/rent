@@ -18,12 +18,12 @@ import java.util.Map;
 public class KdniaoSubscribePush {
 
     //用户ID，快递鸟提供，注意保管，不要泄漏
-    private String EBusinessID = "1710947";//即用户ID，登录快递鸟官网会员中心获取 https://www.kdniao
+    private String EBusinessID = "";//即用户ID，登录快递鸟官网会员中心获取 https://www.kdniao
     //测试
     // private String EBusinessID = "test1710947";
     // .com/UserCenter/v4/UserHome.aspx
     //API key，快递鸟提供，注意保管，不要泄漏
-    private String ApiKey = "797a0f72-eaf4-443a-8243-2f0a27f36c44";//即API
+    private String ApiKey = "";//即API
     //测试
     // private String ApiKey = "1f1a1db0-d12b-4f20-822f-8be1ce68f16b";
     // key，登录快递鸟官网会员中心获取 https://www.kdniao
