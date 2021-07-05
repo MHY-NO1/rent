@@ -8,9 +8,9 @@ import com.aliyun.teaopenapi.models.Config;
  * @author sda
  */
 public class MessageUtils {
-    private static final String ACCESS_KEY_ID = "LTAI5tN4Cq8FSsH1w4mEp9M8";
+    private static final String ACCESS_KEY_ID = "您的密钥";
     //你的accessKeyId,参考本文档步骤2
-    private static final String ACCESS_KEY_SECRET = "s9uHboO9a1PrnGEh5RVzdW6N7fkoKn";
+    private static final String ACCESS_KEY_SECRET = "您的密钥";
     //你的accessKeySecret，参考本文档步骤2
 
     /**
