@@ -15,9 +15,9 @@ import java.util.Map;
 public class KdniaoSubscribe {
 
     //用户ID，快递鸟提供，注意保管，不要泄漏
-    private String EBusinessID = "1710947";//即用户ID，登录快递鸟官网会员中心获取 https://www.kdniao.com/UserCenter/v4/UserHome.aspx
+    private String EBusinessID = "";//即用户ID，登录快递鸟官网会员中心获取 https://www.kdniao.com/UserCenter/v4/UserHome.aspx
     //API key，快递鸟提供，注意保管，不要泄漏
-    private String ApiKey = "797a0f72-eaf4-443a-8243-2f0a27f36c44";//即API key，登录快递鸟官网会员中心获取 https://www.kdniao.com/UserCenter/v4/UserHome.aspx
+    private String ApiKey = "";//即API key，登录快递鸟官网会员中心获取 https://www.kdniao.com/UserCenter/v4/UserHome.aspx
     //请求url, 正式环境地址
     private String ReqURL = "https://api.kdniao.com/api/dist";
 
