@@ -23,9 +23,9 @@ public class UploadUtil {
 //...其他参数参考类注释
         UploadManager uploadManager = new UploadManager(cfg);
 //...生成上传凭证，然后准备上传
-        String accessKey = "Jlz-MfsRYUp9e8RAmo37qqDqPjl68vglPnS52qVR";
-        String secretKey = "wPiYsvICY-GtMTk1IKo6jou3QzZPDL3tKxm4CKq7";
-        String bucket = "hjj-rent";
+        String accessKey = "";
+        String secretKey = "";
+        String bucket = "";
 //默认不指定key的情况下，以文件内容的hash值作为文件名
         String key = null;
         try {
